@@ -13,6 +13,10 @@ const createUser = (fullName, email, password, phone) => {
     }
     return axios.post(URL, data);
 }
+const deleteUser = (_id) => {
+    const URL = `v1/user/${_id}`;
+    return axios.delete(URL);
+}
 export {
-    getAllUser, createUser
+    getAllUser, createUser, deleteUser
 }

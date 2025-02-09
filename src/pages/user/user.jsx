@@ -6,7 +6,7 @@ const LoadUserContext = createContext();
 const User = () => {
     const [userData, setUserData] = useState("");
     const [current, setCurrent] = useState(1);
-    const [pageSize, setPageSize] = useState(10);
+    const [pageSize, setPageSize] = useState(5);
     const [total, setTotal] = useState(0);
     const [loadingTable, setLoadingTable] = useState(false);
     const loadUser = async () => {

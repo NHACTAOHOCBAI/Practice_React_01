@@ -17,6 +17,15 @@ const deleteUser = (_id) => {
     const URL = `v1/user/${_id}`;
     return axios.delete(URL);
 }
+const updateUser = (_id, fullName, phone) => {
+    const URL = `v1/user`;
+    const data = {
+        _id,
+        fullName,
+        phone
+    }
+    return axios.put(URL, data);
+}
 export {
-    getAllUser, createUser, deleteUser
+    getAllUser, createUser, deleteUser, updateUser
 }

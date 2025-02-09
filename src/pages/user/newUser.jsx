@@ -10,11 +10,13 @@ const NewUser = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [phone, setPhone] = useState("");
+    const [isDoneCreate, setIsDoneCreate] = useState(false);
     const [api, contextHolder] = notification.useNotification();
     const showModal = () => {
         setIsModalOpen(true);
     };
     const handleOk = async () => {
+        setIsDoneCreate(true);
         const resCreate = await createUser(fullName, email, password, phone);
         if (resCreate.data) {
             api.open({
@@ -43,6 +45,7 @@ const NewUser = () => {
                 showProgress: true,
                 pauseOnHover: false,
             });
+        setIsDoneCreate(false);
         closeModal();
     };
     const handleCancel = () => {
@@ -64,7 +67,7 @@ const NewUser = () => {
                 onClick={showModal}>
                 Create User
             </Button>
-            <Modal title="Create User" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+            <Modal title="Create User" open={isModalOpen} onOk={handleOk} confirmLoading={isDoneCreate} onCancel={handleCancel}>
                 <div style={{ display: "flex", gap: '15px', flexDirection: 'column' }}>
                     <div>
                         <span>Full Name</span>

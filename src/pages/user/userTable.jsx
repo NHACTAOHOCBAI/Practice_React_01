@@ -1,16 +1,30 @@
 /* eslint-disable react/prop-types */
 import { notification, Popconfirm, Space, Table } from "antd";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { CheckOutlined, CloseOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { LoadUserContext } from "./user"
 import { deleteUser } from "../../services/api.service";
+import UserUpdate from "./userUpdate";
+import UserDetail from "./userDetail";
 const UserTable = (props) => {
-    const { userData, current, setCurrent, pageSize, setPageSize, total, setTotal, loadingTable } = props
-    const { loadUser } = useContext(LoadUserContext)
+    const { userData, current, setCurrent, pageSize, setPageSize, total, setTotal, loadingTable } = props;
+    const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+    const [isDetailOpen, setIsDetailOpen] = useState(false);
+    const [updatedUser, setUpdatedUser] = useState("");
+    const [detailUser, setDetailUser] = useState("");
+    const { loadUser } = useContext(LoadUserContext);
     const [api, contextHolder] = notification.useNotification();
     useEffect(() => {
         loadUser();
     }, [current, pageSize, total]);
+    const handleEditUser = (record) => {
+        setUpdatedUser(record);
+        setIsUpdateModalOpen(true);
+    }
+    const handleDetailUser = (record) => {
+        setDetailUser(record);
+        setIsDetailOpen(true);
+    }
     const handleDelete = async (id) => {
         const resDelete = await deleteUser(id);
         if (resDelete.data) {
@@ -48,9 +62,22 @@ const UserTable = (props) => {
     }
     const columns = [
         {
+            title: 'STT',
+            key: 'STT',
+            render: (_, __, index) => {
+                return (
+                    <div>{pageSize * (current - 1) + index + 1}</div>
+                )
+            }
+        },
+        {
             title: 'ID',
-            dataIndex: '_id',
-            key: '_id',
+            key: 'ID',
+            render: (record) => {
+                return (
+                    <div onClick={() => handleDetailUser(record)}>{record._id}</div>
+                )
+            }
         },
         {
             title: 'Full name',
@@ -73,7 +100,10 @@ const UserTable = (props) => {
             render: (_, record) => {
                 return (
                     <Space size="middle">
-                        <EditOutlined style={{ color: "#0984e3" }} />
+                        <EditOutlined
+                            onClick={() => handleEditUser(record)}
+                            style={{ color: "#0984e3" }}
+                        />
                         <Popconfirm
                             title="Delete the task"
                             description="Are you sure to delete this task?"
@@ -93,6 +123,18 @@ const UserTable = (props) => {
     return (
         <>
             {contextHolder}
+            <UserDetail
+                setIsDetailOpen={setIsDetailOpen}
+                isDetailOpen={isDetailOpen}
+                detailUser={detailUser}
+                setDetailUser={setDetailUser}
+            />
+            <UserUpdate
+                isUpdateModalOpen={isUpdateModalOpen}
+                setIsUpdateModalOpen={setIsUpdateModalOpen}
+                updatedUser={updatedUser}
+                setUpdatedUser={setUpdatedUser}
+            />
             <Table
                 columns={columns}
                 dataSource={userData}

@@ -11,6 +11,7 @@ const UserDetail = (props) => {
     const [selectedFile, setSelectedFile] = useState("");
     const [preview, setPreview] = useState("");
     const [api, contextHolder] = notification.useNotification();
+    const [saveLoading, setSaveLoading] = useState(false);
     const onClose = () => {
         closeDrawer();
     }
@@ -25,6 +26,7 @@ const UserDetail = (props) => {
         setPreview(URL.createObjectURL(file));
     }
     const handleSave = async () => {
+        setSaveLoading(true);
         const resUploadFile = await uploadSingleFile(selectedFile, "avatar");
         if (resUploadFile.data) {
             const resUpdateAvatar = await updateUserAvatar(detailUser._id, detailUser.fullName, detailUser.phone, resUploadFile.data.fileUploaded)
@@ -40,7 +42,7 @@ const UserDetail = (props) => {
                     showProgress: true,
                     pauseOnHover: false,
                 });
-                loadUser();
+                await loadUser();
             }
             else {
                 api.open({
@@ -72,6 +74,7 @@ const UserDetail = (props) => {
                 pauseOnHover: false,
             });
         }
+        setSaveLoading(false);
     }
     return (
         <>
@@ -107,6 +110,7 @@ const UserDetail = (props) => {
                                 <Button
                                     type='primary'
                                     onClick={handleSave}
+                                    loading={saveLoading}
                                 >Save</Button>
                             </>
                         )

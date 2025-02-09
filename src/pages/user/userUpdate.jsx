@@ -10,12 +10,14 @@ const UserUpdate = (props) => {
     const { isUpdateModalOpen, setIsUpdateModalOpen, updatedUser, setUpdatedUser } = props;
     const [fullName, setFullName] = useState("");
     const [phone, setPhone] = useState("");
+    const [isDoneUpdate, setIsDoneUpdate] = useState(false);
     const [api, contextHolder] = notification.useNotification();
     useEffect(() => {
         setFullName(updatedUser.fullName)
         setPhone(updatedUser.phone)
     }, [updatedUser])
     const handleOk = async () => {
+        setIsDoneUpdate(true);
         const resUpdate = await updateUser(updatedUser._id, fullName, phone);
         if (resUpdate.data) {
             api.open({
@@ -29,7 +31,7 @@ const UserUpdate = (props) => {
                 showProgress: true,
                 pauseOnHover: false,
             });
-            loadUser();
+            await loadUser();
         }
         else
             api.open({
@@ -44,6 +46,7 @@ const UserUpdate = (props) => {
                 showProgress: true,
                 pauseOnHover: false,
             });
+        setIsDoneUpdate(false);
         closeModal();
     }
     const handleCancel = () => {
@@ -58,7 +61,7 @@ const UserUpdate = (props) => {
     return (
         <>
             {contextHolder}
-            <Modal title="Create User" open={isUpdateModalOpen} onOk={handleOk} onCancel={handleCancel}>
+            <Modal title="Create User" open={isUpdateModalOpen} confirmLoading={isDoneUpdate} onOk={handleOk} onCancel={handleCancel}>
                 <div style={{ display: "flex", gap: '15px', flexDirection: 'column' }}>
                     <div>
                         <span>ID</span>

@@ -30,7 +30,7 @@ const NewUser = () => {
                 showProgress: true,
                 pauseOnHover: false,
             });
-            loadUser();
+            await loadUser();
         }
         else
             api.open({

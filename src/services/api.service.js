@@ -26,6 +26,30 @@ const updateUser = (_id, fullName, phone) => {
     }
     return axios.put(URL, data);
 }
+// chua tim hieu uploadSingleFile
+const uploadSingleFile = (file, folder) => {
+    const URL = `v1/file/upload`;
+    const config = {
+        headers: {
+            "upload-type": folder,
+            "Content-Type": "multipart/form-data"
+        }
+    }
+    const bodyFormData = new FormData();
+    bodyFormData.append("fileImg", file);
+    return axios.post(URL, bodyFormData, config);
+}
+const updateUserAvatar = (_id, fullName, phone, avatar) => {
+    const URL = `v1/user`;
+    const data = {
+        _id,
+        fullName,
+        phone,
+        avatar
+    }
+    return axios.put(URL, data);
+}
 export {
-    getAllUser, createUser, deleteUser, updateUser
+    getAllUser, createUser, deleteUser, updateUser, updateUserAvatar,
+    uploadSingleFile
 }

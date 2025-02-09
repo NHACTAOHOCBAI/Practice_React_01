@@ -127,7 +127,6 @@ const UserTable = (props) => {
                 setIsDetailOpen={setIsDetailOpen}
                 isDetailOpen={isDetailOpen}
                 detailUser={detailUser}
-                setDetailUser={setDetailUser}
             />
             <UserUpdate
                 isUpdateModalOpen={isUpdateModalOpen}

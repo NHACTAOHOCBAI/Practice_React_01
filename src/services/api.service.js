@@ -49,7 +49,16 @@ const updateUserAvatar = (_id, fullName, phone, avatar) => {
     }
     return axios.put(URL, data);
 }
+const loginUser = (username, password) => {
+    const URL = `v1/auth/login`;
+    const data = {
+        username,
+        password
+    }
+    return axios.post(URL, data);
+}
 export {
     getAllUser, createUser, deleteUser, updateUser, updateUserAvatar,
-    uploadSingleFile
+    uploadSingleFile,
+    loginUser,
 }

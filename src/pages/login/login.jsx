@@ -2,18 +2,23 @@ import { CheckOutlined, CloseOutlined, LockOutlined, UserOutlined } from "@ant-d
 import { Button, Form, Input, notification } from "antd";
 import { loginUser } from "../../services/api.service";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { UserInformationContext } from "../../App";
 
 const Login = () => {
+    const { setUserInformation } = useContext(UserInformationContext);
     const [form] = Form.useForm();
     const [loginLoading, setLoginLoading] = useState(false);
     const [api, contextHolder] = notification.useNotification();
     const navigate = useNavigate();
+    const handleRegisterNow = () => {
+        navigate('/register');
+    }
     const handleLoginFinish = async (values) => {
         setLoginLoading(true);
         const resLogin = await loginUser(values.username, values.password);
         if (resLogin.data) {
-            console.log(resLogin.data.access_token);
+            localStorage.setItem("access_token", resLogin.data.access_token);
             api.open({
                 message: 'Login account successfully',
                 icon: (
@@ -25,9 +30,10 @@ const Login = () => {
                 showProgress: true,
                 pauseOnHover: false,
             });
+            setUserInformation(resLogin.data.user.fullName)
             setTimeout(() => {
                 setLoginLoading(false);
-                navigate('/users');
+                navigate('/');
             }, 1000);
         }
         else {
@@ -60,9 +66,6 @@ const Login = () => {
                 <Form
                     form={form}
                     name="login"
-                    initialValues={{
-                        remember: true,
-                    }}
                     onFinish={handleLoginFinish}
                 >
                     <Form.Item
@@ -91,7 +94,7 @@ const Login = () => {
                         <Button block type="primary" htmlType="submit" loading={loginLoading}>
                             Log in
                         </Button>
-                        or <a href="">Register now!</a>
+                        or <a onClick={handleRegisterNow}>Register now!</a>
                     </Form.Item>
                 </Form>
             </div>

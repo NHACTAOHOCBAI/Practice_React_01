@@ -57,8 +57,26 @@ const loginUser = (username, password) => {
     }
     return axios.post(URL, data);
 }
+const registerUser = (fullName, email, password, phone) => {
+    const URL = `v1/user/register`;
+    const data = {
+        fullName,
+        email,
+        password,
+        phone
+    }
+    return axios.post(URL, data);
+}
+const logoutUser = () => {
+    const URL = `v1/auth/logout`;
+    return axios.post(URL);
+}
+const getAccount = () => {
+    const URL = `v1/auth/account`;
+    return axios.get(URL);
+}
 export {
     getAllUser, createUser, deleteUser, updateUser, updateUserAvatar,
     uploadSingleFile,
-    loginUser,
+    loginUser, registerUser, logoutUser, getAccount
 }

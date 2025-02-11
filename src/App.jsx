@@ -15,31 +15,47 @@ function App() {
   const [userInformation, setUserInformation] = useState();
   const [isAppLoading, setIsAppLoading] = useState(false);
   const getUserInformation = async () => {
+    setIsAppLoading(true);
     const resGetUser = await getAccount();
     if (resGetUser.data) {
       setUserInformation(resGetUser.data.user.fullName);
     }
+    setIsAppLoading(false);
   }
   useEffect(() => {
     getUserInformation();
   }, [])
   return (
     <>
-      <Spin indicator={<LoadingOutlined spin />} />
-      <UserInformationContext.Provider value={{ userInformation, setUserInformation }}>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Layout />}>
-              <Route index element={<Home />} />
-              <Route path="users" element={<User />} />
-              <Route path="books" element={<Book />} />
-            </Route>
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="*" element={<NoPage />} />
-          </Routes>
-        </BrowserRouter>
-      </UserInformationContext.Provider>
+      {
+        isAppLoading == true ?
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100vh",
+              width: "100vw",
+            }}
+          >
+            <Spin indicator={<LoadingOutlined style={{ fontSize: 48 }} spin />} />
+          </div>
+          :
+          <UserInformationContext.Provider value={{ userInformation, setUserInformation }}>
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<Layout />}>
+                  <Route index element={<Home />} />
+                  <Route path="users" element={<User />} />
+                  <Route path="books" element={<Book />} />
+                </Route>
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="*" element={<NoPage />} />
+              </Routes>
+            </BrowserRouter>
+          </UserInformationContext.Provider>
+      }
     </>
   )
 }

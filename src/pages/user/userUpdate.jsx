@@ -61,7 +61,7 @@ const UserUpdate = (props) => {
     return (
         <>
             {contextHolder}
-            <Modal title="Create User" open={isUpdateModalOpen} confirmLoading={isDoneUpdate} onOk={handleOk} onCancel={handleCancel}>
+            <Modal title="Update User" open={isUpdateModalOpen} confirmLoading={isDoneUpdate} onOk={handleOk} onCancel={handleCancel}>
                 <div style={{ display: "flex", gap: '15px', flexDirection: 'column' }}>
                     <div>
                         <span>ID</span>

@@ -25,7 +25,6 @@ const NewBook = () => {
     };
     const handleOk = async () => {
         setIsDoneCreate(true);
-        console.log(selectedFile, mainText, author, price, quantity, category);
         if (!selectedFile) {
             api.open({
                 message: 'Create book failed',

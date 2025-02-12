@@ -98,10 +98,23 @@ const createBook = (thumbnail, mainText, author, price, quantity, category) => {
     }
     return axios.post(URL, data);
 }
+const updateBook = (_id, thumbnail, mainText, author, price, quantity, category) => {
+    const URL = `v1/book`;
+    const data = {
+        _id,
+        thumbnail,
+        mainText,
+        author,
+        price,
+        quantity,
+        category
+    }
+    return axios.put(URL, data);
+}
 //Book API
 export {
     getAllUser, createUser, deleteUser, updateUser, updateUserAvatar,
     uploadSingleFile,
     loginUser, registerUser, logoutUser, getAccount,
-    getAllBook, createBook, deleteBook
+    getAllBook, createBook, deleteBook, updateBook
 }

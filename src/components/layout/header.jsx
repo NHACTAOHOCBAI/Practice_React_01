@@ -1,15 +1,18 @@
-import { CheckOutlined, CloseOutlined, HomeOutlined, LoginOutlined, LogoutOutlined, MehOutlined, SnippetsOutlined, UserOutlined } from "@ant-design/icons";
-import { Menu, notification } from "antd";
-import { useContext, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { CheckOutlined, CloseOutlined, HomeOutlined, LoadingOutlined, LoginOutlined, LogoutOutlined, MehOutlined, SnippetsOutlined, UserOutlined } from "@ant-design/icons";
+import { Menu, notification, Spin } from "antd";
+import { useContext } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { UserInformationContext } from "../../App";
 import { logoutUser } from "../../services/api.service";
 
 const Header = () => {
-    const { userInformation, setUserInformation } = useContext(UserInformationContext);
+    const { userInformation, setUserInformation, isAppLoading, setIsAppLoading } = useContext(UserInformationContext);
+    let location = useLocation();
+    console.log(location);
     const [api, contextHolder] = notification.useNotification();
     const navigate = useNavigate();
     const handleLogout = async () => {
+        setIsAppLoading(true);
         const resLogout = await logoutUser();
         if (resLogout.data) {
             api.open({
@@ -41,21 +44,22 @@ const Header = () => {
                 pauseOnHover: false,
             });
         }
+        setIsAppLoading(false);
     }
     const items = [
         {
             label: <Link to={'/'}>Home</Link>,
-            key: 'home',
+            key: "/",
             icon: <HomeOutlined />,
         },
         {
             label: <Link to={'/users'}>User</Link>,
-            key: 'users',
+            key: '/users',
             icon: <UserOutlined />,
         },
         {
             label: <Link to={'/books'}>Book</Link>,
-            key: 'books',
+            key: '/books',
             icon: <SnippetsOutlined />,
         },
         ...(userInformation ?
@@ -74,23 +78,35 @@ const Header = () => {
             :
             [{
                 label: <Link to={'/login'}>Login</Link>,
-                key: 'login',
+                key: '/login',
                 icon: <LoginOutlined />,
             }]
         )
     ];
-    const [current, setCurrent] = useState('home');
-    const onClick = (e) => {
-        setCurrent(e.key);
-    };
     return (
         <>
-            {contextHolder}
-            <Menu
-                onClick={onClick}
-                selectedKeys={[current]}
-                mode="horizontal"
-                items={items} />
+            {
+                isAppLoading == true ?
+                    <div
+                        style={{
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            height: "100vh",
+                            width: "100vw",
+                        }}
+                    >
+                        <Spin indicator={<LoadingOutlined style={{ fontSize: 48 }} spin />} />
+                    </div>
+                    :
+                    <>
+                        {contextHolder}
+                        <Menu
+                            selectedKeys={location.pathname}
+                            mode="horizontal"
+                            items={items} />
+                    </>
+            }
         </>
     )
 }

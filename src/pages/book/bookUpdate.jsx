@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { Input, InputNumber, Modal, notification, Select } from "antd";
+import { Input, InputNumber, Modal, notification, Select, Skeleton } from "antd";
 import { LoadBookContext } from "./book";
 import { useContext, useEffect, useState } from "react";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
@@ -16,6 +16,7 @@ const BookUpdate = (props) => {
     const [selectedFile, setSelectedFile] = useState("");
     const [preview, setPreview] = useState("");
     const [isDoneUpdate, setIsDoneUpdate] = useState(false);
+    const [isDoneProgressUpdate, setIsDoneProgressUpdate] = useState(true);
     const [api, contextHolder] = notification.useNotification();
     useEffect(() => {
         setMainText(updatedBook.mainText);
@@ -32,6 +33,7 @@ const BookUpdate = (props) => {
         setPreview(URL.createObjectURL(file));
     }
     const handleOk = async () => {
+        setIsDoneProgressUpdate(false);
         setIsDoneUpdate(true);
         if (!selectedFile) {
             api.open({
@@ -46,11 +48,22 @@ const BookUpdate = (props) => {
                 showProgress: true,
                 pauseOnHover: false,
             });
+            closeModal();
             return;
         }
-        const resUploadFile = await uploadSingleFile(selectedFile, "book");
-        if (resUploadFile.data) {
-            const resUpdate = await updateBook(updatedBook._id, resUploadFile.data.fileUploaded, mainText, author, price, quantity, category);
+        let imageBook = "";
+        let resUploadFile = "";
+        if (selectedFile === updatedBook.thumbnail)
+        //neu chua chon file thay doi
+        {
+            imageBook = selectedFile;
+        }
+        else {
+            resUploadFile = await uploadSingleFile(selectedFile, "book");
+            imageBook = resUploadFile.data.fileUploaded;
+        }
+        if (selectedFile === updatedBook.thumbnail || resUploadFile.data) {
+            const resUpdate = await updateBook(updatedBook._id, imageBook, mainText, author, price, quantity, category);
             if (resUpdate.data) {
                 api.open({
                     message: 'Update book successfully',
@@ -93,7 +106,6 @@ const BookUpdate = (props) => {
                 pauseOnHover: false,
             });
         }
-        setIsDoneUpdate(false);
         closeModal();
     };
     const handleCancel = () => {
@@ -109,85 +121,91 @@ const BookUpdate = (props) => {
         setCategory("");
         setSelectedFile("");
         setPreview("");
+        setIsDoneUpdate(false);
+        setIsDoneProgressUpdate(true);
     }
     return (
         <>
             {contextHolder}
             <Modal title="Update Book" open={isUpdateModalOpen} confirmLoading={isDoneUpdate} onOk={handleOk} onCancel={handleCancel}>
-                <div style={{ display: "flex", gap: '15px', flexDirection: 'column' }}>
-                    <div>
-                        <span>ID</span>
-                        <Input
-                            disabled
-                            value={updatedBook._id}
-                        ></Input>
+                {isDoneProgressUpdate ?
+                    <div style={{ display: "flex", gap: '15px', flexDirection: 'column' }}>
+                        <div>
+                            <span>ID</span>
+                            <Input
+                                disabled
+                                value={updatedBook._id}
+                            ></Input>
+                        </div>
+                        <div>
+                            <span>Main text</span>
+                            <Input
+                                onChange={(event) => setMainText(event.target.value)}
+                                value={mainText}
+                            />
+                        </div>
+                        <div>
+                            <span>Author</span>
+                            <Input
+                                onChange={(event) => setAuthor(event.target.value)}
+                                value={author}
+                            />
+                        </div>
+                        <div>
+                            <span style={{ display: "block" }}>Price</span>
+                            <InputNumber
+                                addonAfter="VNĐ"
+                                onChange={(event) => setPrice(event)}
+                                value={price}
+                            />
+                        </div>
+                        <div>
+                            <span style={{ display: "block" }}>Quantity</span>
+                            <InputNumber
+                                onChange={(event) => setQuantity(event)}
+                                value={quantity}
+                            />
+                        </div>
+                        <div>
+                            <span style={{ display: "block" }}>Category</span>
+                            <Select
+                                style={{ width: 120 }}
+                                onChange={(event) => setCategory(event)}
+                                value={category}
+                                options={[
+                                    { value: 'Arts', label: 'Arts' },
+                                    { value: 'Business', label: 'Business' },
+                                    { value: 'Comics', label: 'Comics' },
+                                    { value: 'Cooking', label: 'Cooking' },
+                                    { value: 'Entertainment', label: 'Entertainment' },
+                                    { value: 'History', label: 'History' },
+                                    { value: 'Music', label: 'Music' },
+                                    { value: 'Sports', label: 'Sports' },
+                                    { value: 'Teen', label: 'Teen' },
+                                    { value: 'Travel', label: 'Travel' }]}
+                            />
+                        </div>
+                        <div>
+                            <input
+                                type='file'
+                                onChange={handleOnChangeFile}
+                            ></input>
+                            <br />
+                            {
+                                preview && (
+                                    <img
+                                        style={{ margin: 10 }}
+                                        height={100}
+                                        width={100}
+                                        src={preview}
+                                    />
+                                )
+                            }
+                        </div>
                     </div>
-                    <div>
-                        <span>Main text</span>
-                        <Input
-                            onChange={(event) => setMainText(event.target.value)}
-                            value={mainText}
-                        />
-                    </div>
-                    <div>
-                        <span>Author</span>
-                        <Input
-                            onChange={(event) => setAuthor(event.target.value)}
-                            value={author}
-                        />
-                    </div>
-                    <div>
-                        <span style={{ display: "block" }}>Price</span>
-                        <InputNumber
-                            addonAfter="VNĐ"
-                            onChange={(event) => setPrice(event)}
-                            value={price}
-                        />
-                    </div>
-                    <div>
-                        <span style={{ display: "block" }}>Quantity</span>
-                        <InputNumber
-                            onChange={(event) => setQuantity(event)}
-                            value={quantity}
-                        />
-                    </div>
-                    <div>
-                        <span style={{ display: "block" }}>Category</span>
-                        <Select
-                            style={{ width: 120 }}
-                            onChange={(event) => setCategory(event)}
-                            value={category}
-                            options={[
-                                { value: 'Arts', label: 'Arts' },
-                                { value: 'Business', label: 'Business' },
-                                { value: 'Comics', label: 'Comics' },
-                                { value: 'Cooking', label: 'Cooking' },
-                                { value: 'Entertainment', label: 'Entertainment' },
-                                { value: 'History', label: 'History' },
-                                { value: 'Music', label: 'Music' },
-                                { value: 'Sports', label: 'Sports' },
-                                { value: 'Teen', label: 'Teen' },
-                                { value: 'Travel', label: 'Travel' }]}
-                        />
-                    </div>
-                    <div>
-                        <input
-                            type='file'
-                            onChange={handleOnChangeFile}
-                        ></input>
-                        <br />
-                        {
-                            preview && (
-                                <img
-                                    style={{ margin: 10 }}
-                                    height={100}
-                                    width={100}
-                                    src={preview}
-                                />
-                            )
-                        }
-                    </div>
-                </div>
+                    :
+                    <Skeleton active />
+                }
             </Modal></>)
 }
 export default BookUpdate

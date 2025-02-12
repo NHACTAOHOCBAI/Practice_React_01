@@ -41,7 +41,7 @@ function App() {
             <Spin indicator={<LoadingOutlined style={{ fontSize: 48 }} spin />} />
           </div>
           :
-          <UserInformationContext.Provider value={{ userInformation, setUserInformation }}>
+          <UserInformationContext.Provider value={{ userInformation, setUserInformation, isAppLoading, setIsAppLoading }}>
             <BrowserRouter>
               <Routes>
                 <Route path="/" element={<Layout />}>

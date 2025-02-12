@@ -14,6 +14,9 @@ const Login = () => {
     const handleRegisterNow = () => {
         navigate('/register');
     }
+    const handleGoHomePage = () => {
+        navigate('/');
+    }
     const handleLoginFinish = async (values) => {
         setLoginLoading(true);
         const resLogin = await loginUser(values.username, values.password);
@@ -94,7 +97,7 @@ const Login = () => {
                         <Button block type="primary" htmlType="submit" loading={loginLoading}>
                             Log in
                         </Button>
-                        or <a onClick={handleRegisterNow}>Register now!</a>
+                        <a onClick={handleRegisterNow}>Register now!</a> or <a onClick={handleGoHomePage}>Back to home</a>
                     </Form.Item>
                 </Form>
             </div>

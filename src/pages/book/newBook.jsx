@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import { LoadBookContext } from "./book";
-import { Button, Input, InputNumber, Modal, notification, Select } from "antd";
+import { Button, Input, InputNumber, Modal, notification, Select, Skeleton } from "antd";
 import { createBook, uploadSingleFile } from "../../services/api.service";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 const NewBook = () => {
@@ -14,6 +14,7 @@ const NewBook = () => {
     const [isDoneCreate, setIsDoneCreate] = useState(false);
     const [selectedFile, setSelectedFile] = useState("");
     const [preview, setPreview] = useState("");
+    const [isDoneProgressCreate, setIsDoneProgressCreate] = useState(true);
     const [api, contextHolder] = notification.useNotification();
     const handleOnChangeFile = (event) => {
         const file = event.target.files[0];
@@ -24,6 +25,7 @@ const NewBook = () => {
         setIsModalOpen(true);
     };
     const handleOk = async () => {
+        setIsDoneProgressCreate(false);
         setIsDoneCreate(true);
         if (!selectedFile) {
             api.open({
@@ -38,6 +40,7 @@ const NewBook = () => {
                 showProgress: true,
                 pauseOnHover: false,
             });
+            closeModal();
             return;
         }
         const resUploadFile = await uploadSingleFile(selectedFile, "book");
@@ -85,7 +88,6 @@ const NewBook = () => {
                 pauseOnHover: false,
             });
         }
-        setIsDoneCreate(false);
         closeModal();
     };
     const handleCancel = () => {
@@ -100,6 +102,8 @@ const NewBook = () => {
         setPrice("");
         setQuantity("");
         setCategory("");
+        setIsDoneCreate(false);
+        setIsDoneProgressCreate(true);
     }
     return (
         <>
@@ -111,73 +115,77 @@ const NewBook = () => {
                 Create book
             </Button>
             <Modal title="Create Book" open={isModalOpen} onOk={handleOk} confirmLoading={isDoneCreate} onCancel={handleCancel}>
-                <div style={{ display: "flex", gap: '15px', flexDirection: 'column' }}>
-                    <div>
-                        <span>Main text</span>
-                        <Input
-                            onChange={(event) => setMainText(event.target.value)}
-                            value={mainText}
-                        />
+                {isDoneProgressCreate ?
+                    <div style={{ display: "flex", gap: '15px', flexDirection: 'column' }}>
+                        <div>
+                            <span>Main text</span>
+                            <Input
+                                onChange={(event) => setMainText(event.target.value)}
+                                value={mainText}
+                            />
+                        </div>
+                        <div>
+                            <span>Author</span>
+                            <Input
+                                onChange={(event) => setAuthor(event.target.value)}
+                                value={author}
+                            />
+                        </div>
+                        <div>
+                            <span style={{ display: "block" }}>Price</span>
+                            <InputNumber
+                                addonAfter="VNĐ"
+                                onChange={(event) => setPrice(event)}
+                                value={price}
+                            />
+                        </div>
+                        <div>
+                            <span style={{ display: "block" }}>Quantity</span>
+                            <InputNumber
+                                onChange={(event) => setQuantity(event)}
+                                value={quantity}
+                            />
+                        </div>
+                        <div>
+                            <span style={{ display: "block" }}>Category</span>
+                            <Select
+                                style={{ width: 120 }}
+                                onChange={(event) => setCategory(event)}
+                                value={category}
+                                options={[
+                                    { value: 'Arts', label: 'Arts' },
+                                    { value: 'Business', label: 'Business' },
+                                    { value: 'Comics', label: 'Comics' },
+                                    { value: 'Cooking', label: 'Cooking' },
+                                    { value: 'Entertainment', label: 'Entertainment' },
+                                    { value: 'History', label: 'History' },
+                                    { value: 'Music', label: 'Music' },
+                                    { value: 'Sports', label: 'Sports' },
+                                    { value: 'Teen', label: 'Teen' },
+                                    { value: 'Travel', label: 'Travel' }]}
+                            />
+                        </div>
+                        <div>
+                            <input
+                                type='file'
+                                onChange={handleOnChangeFile}
+                            ></input>
+                            <br />
+                            {
+                                preview && (
+                                    <img
+                                        style={{ margin: 10 }}
+                                        height={100}
+                                        width={100}
+                                        src={preview}
+                                    />
+                                )
+                            }
+                        </div>
                     </div>
-                    <div>
-                        <span>Author</span>
-                        <Input
-                            onChange={(event) => setAuthor(event.target.value)}
-                            value={author}
-                        />
-                    </div>
-                    <div>
-                        <span style={{ display: "block" }}>Price</span>
-                        <InputNumber
-                            addonAfter="VNĐ"
-                            onChange={(event) => setPrice(event)}
-                            value={price}
-                        />
-                    </div>
-                    <div>
-                        <span style={{ display: "block" }}>Quantity</span>
-                        <InputNumber
-                            onChange={(event) => setQuantity(event)}
-                            value={quantity}
-                        />
-                    </div>
-                    <div>
-                        <span style={{ display: "block" }}>Category</span>
-                        <Select
-                            style={{ width: 120 }}
-                            onChange={(event) => setCategory(event)}
-                            value={category}
-                            options={[
-                                { value: 'Arts', label: 'Arts' },
-                                { value: 'Business', label: 'Business' },
-                                { value: 'Comics', label: 'Comics' },
-                                { value: 'Cooking', label: 'Cooking' },
-                                { value: 'Entertainment', label: 'Entertainment' },
-                                { value: 'History', label: 'History' },
-                                { value: 'Music', label: 'Music' },
-                                { value: 'Sports', label: 'Sports' },
-                                { value: 'Teen', label: 'Teen' },
-                                { value: 'Travel', label: 'Travel' }]}
-                        />
-                    </div>
-                    <div>
-                        <input
-                            type='file'
-                            onChange={handleOnChangeFile}
-                        ></input>
-                        <br />
-                        {
-                            preview && (
-                                <img
-                                    style={{ margin: 10 }}
-                                    height={100}
-                                    width={100}
-                                    src={preview}
-                                />
-                            )
-                        }
-                    </div>
-                </div>
+                    :
+                    <Skeleton active />
+                }
             </Modal>
         </>
     )

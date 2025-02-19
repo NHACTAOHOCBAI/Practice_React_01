@@ -30,19 +30,23 @@ const Book = () => {
         (
             userInformation ?
                 (
-                    <LoadBookContext.Provider value={{ loadBook }}>
-                        <NewBook />
-                        <BookTable
-                            bookData={bookData}
-                            current={current}
-                            setCurrent={setCurrent}
-                            pageSize={pageSize}
-                            setPageSize={setPageSize}
-                            total={total}
-                            setTotal={setTotal}
-                            loadingTable={loadingTable}
-                        />
-                    </LoadBookContext.Provider>
+                    <div style={{
+                        marginBottom: "90px"
+                    }} >
+                        <LoadBookContext.Provider value={{ loadBook }}>
+                            <NewBook />
+                            <BookTable
+                                bookData={bookData}
+                                current={current}
+                                setCurrent={setCurrent}
+                                pageSize={pageSize}
+                                setPageSize={setPageSize}
+                                total={total}
+                                setTotal={setTotal}
+                                loadingTable={loadingTable}
+                            />
+                        </LoadBookContext.Provider>
+                    </div>
                 )
                 :
                 (

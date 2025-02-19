@@ -21,19 +21,23 @@ const User = () => {
         setLoadingTable(false);
     }
     return (
-        <LoadUserContext.Provider value={{ loadUser }}>
-            <NewUser />
-            <UserTable
-                userData={userData}
-                current={current}
-                setCurrent={setCurrent}
-                pageSize={pageSize}
-                setPageSize={setPageSize}
-                total={total}
-                setTotal={setTotal}
-                loadingTable={loadingTable}
-            />
-        </LoadUserContext.Provider>
+        <div style={{
+            marginBottom: "90px"
+        }} >
+            <LoadUserContext.Provider value={{ loadUser }} >
+                <NewUser />
+                <UserTable
+                    userData={userData}
+                    current={current}
+                    setCurrent={setCurrent}
+                    pageSize={pageSize}
+                    setPageSize={setPageSize}
+                    total={total}
+                    setTotal={setTotal}
+                    loadingTable={loadingTable}
+                />
+            </LoadUserContext.Provider>
+        </div>
     )
 }
 export { User, LoadUserContext }
